@@ -30,7 +30,7 @@ public class RecipeController : ControllerBase
         return Ok(await _recipeService.GetRecipeById(id));
     }
 
-    [HttpPost("{id}")]
+    [HttpPost()]
     public async Task<ActionResult<ServiceResponse<GetIngredientDto>>> AddRecipe(AddRecipeDto addRecipe)
     {
         return Ok(await _recipeService.AddRecipe(addRecipe));

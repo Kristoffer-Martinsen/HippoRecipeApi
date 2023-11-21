@@ -43,22 +43,17 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> GetRecipeById(int id)
     {
-        throw new NotImplementedException();
-        /*
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
 
-        var recipe = _context.Recipes
+        var recipe = await _context.Recipes
             .Include(r => r.Ingredients)
             .FirstOrDefaultAsync(r => r.Id == id);
         serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
         return serviceResponse;
-        */
     }
 
     public async Task<ServiceResponse<GetRecipeDto>> AddRecipe(AddRecipeDto addRecipe)
     {
-        throw new NotImplementedException();
-        /*
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {
@@ -72,6 +67,7 @@ public class RecipeService : IRecipeService
                 => new Ingredient { Name = i.Name, Unit = i.Unit, Recipes = new List<Recipe>{newRecipe}}).ToList();
             newRecipe.Ingredients = ingredients;
             _context.Recipes.Add(newRecipe);
+            serviceResponse.Data = _mapper.Map<GetRecipeDto>(newRecipe);
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -81,7 +77,6 @@ public class RecipeService : IRecipeService
         }
 
         return serviceResponse;
-        */
     }
 
     public async Task<ServiceResponse<GetRecipeDto>> PutRecipe(int id, UpdateRecipeDto updateRecipe)
