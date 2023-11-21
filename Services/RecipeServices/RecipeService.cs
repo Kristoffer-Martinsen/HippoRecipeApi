@@ -54,6 +54,7 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> AddRecipe(AddRecipeDto addRecipe)
     {
+        //TODO check if ingredient exists and use that ingredientID if it does. Probably needs a new column in Ingredient for alias or something
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {
@@ -91,6 +92,27 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> DeleteRecipe(int id)
     {
-        throw new NotImplementedException();
+        var serviceResponse = new ServiceResponse<GetRecipeDto>();
+        try
+        {
+            var recipeToDelete = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            
+            if (recipeToDelete != null)
+            {
+                _context.Recipes.Remove(recipeToDelete);
+                serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipeToDelete);
+            }
+
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = $"Error: {ex.Message}";
+        }
+
+        return serviceResponse;
     }
 }
