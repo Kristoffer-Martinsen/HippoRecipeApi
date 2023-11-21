@@ -87,7 +87,32 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> PatchRecipe(int id, JsonPatchDocument<UpdateRecipeDto> patchDocument)
     {
-        throw new NotImplementedException();
+        var serviceResponse = new ServiceResponse<GetRecipeDto>();
+        try
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            if (recipe == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"Recipe with {id} does not exist";
+                return serviceResponse;
+            }
+            //TODO Patching item in ingredients applies null value to properties missing from request
+            dynamic recipeToPatch = _mapper.Map<UpdateRecipeDto>(recipe);
+            patchDocument.ApplyTo(recipeToPatch);
+            _mapper.Map(recipeToPatch, recipe);
+            serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = $"Error: {ex.Message}";
+        }
+
+        return serviceResponse;
     }
 
     public async Task<ServiceResponse<GetRecipeDto>> DeleteRecipe(int id)
