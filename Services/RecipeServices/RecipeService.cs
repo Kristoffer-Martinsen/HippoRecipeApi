@@ -82,7 +82,30 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> PutRecipe(int id, UpdateRecipeDto updateRecipe)
     {
-        throw new NotImplementedException();
+        var serviceResponse = new ServiceResponse<GetRecipeDto>();
+        try
+        {
+            var recipe = await _context.Recipes
+                .Include(r => r.Ingredients)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            if (recipe == null)
+            {
+                serviceResponse.Success = false;
+                serviceResponse.Message = $"No recipe with {id} found";
+                return serviceResponse;
+            }
+
+            _mapper.Map(updateRecipe, recipe);
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = $"Error: {ex.Message}";
+        }
+
+        return serviceResponse;
     }
 
     public async Task<ServiceResponse<GetRecipeDto>> PatchRecipe(int id, JsonPatchDocument<UpdateRecipeDto> patchDocument)
