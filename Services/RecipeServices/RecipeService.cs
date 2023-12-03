@@ -29,11 +29,13 @@ public class RecipeService : IRecipeService
         serviceResponse.Data = recipes
             .Select(r => new GetRecipeDto
             {
+                Id = r.Id,
                 Name = r.Name,
                 Description = r.Description,
                 Ingredients = 
                     r.Ingredients.Select(i => new GetIngredientDto
                 {
+                    Id = i.Id,
                     Name = i.Name,
                     Unit = i.Unit
                 }).ToList()
