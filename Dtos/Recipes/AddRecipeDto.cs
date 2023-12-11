@@ -7,4 +7,5 @@ public class AddRecipeDto
     public string Name { get; set; }
     public string Description { get; set; }
     public List<AddIngredientDto> Ingredients { get; set; }
+    public string ImageURL { get; set; }
 }

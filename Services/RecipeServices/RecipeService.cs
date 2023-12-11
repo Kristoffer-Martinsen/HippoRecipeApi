@@ -32,6 +32,7 @@ public class RecipeService : IRecipeService
                 Id = r.Id,
                 Name = r.Name,
                 Description = r.Description,
+                ImageURL = r.ImageURL,
                 Ingredients = 
                     r.Ingredients.Select(i => new GetIngredientDto
                 {
