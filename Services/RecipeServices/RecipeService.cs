@@ -1,6 +1,7 @@
 using AutoMapper;
 using HippoRecipeApi.Dtos;
 using HippoRecipeApi.Dtos.Recipes;
+using HippoRecipeApi.Dtos.Steps;
 using HippoRecipeApi.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,7 @@ public class RecipeService : IRecipeService
 
         var recipes = await _context.Recipes
             .Include(r => r.Ingredients)
+            .Include(r => r.Steps)
             .ToListAsync();
         
         serviceResponse.Data = recipes
@@ -39,7 +41,12 @@ public class RecipeService : IRecipeService
                     Id = i.Id,
                     Name = i.Name,
                     Unit = i.Unit
-                }).ToList()
+                }).ToList(),
+                Steps = r.Steps.Select(s => new GetStepDto
+                {
+                    Id = s.Id,
+                    Instruction = s.Instruction
+                }).ToList(),
             }).ToList();
         return serviceResponse;
     }
@@ -50,6 +57,7 @@ public class RecipeService : IRecipeService
 
         var recipe = await _context.Recipes
             .Include(r => r.Ingredients)
+            .Include(r => r.Steps)
             .FirstOrDefaultAsync(r => r.Id == id);
         serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
         return serviceResponse;
@@ -70,7 +78,11 @@ public class RecipeService : IRecipeService
 
             var ingredients = addRecipe.Ingredients.Select(i
                 => new Ingredient { Name = i.Name, Unit = i.Unit, Recipes = new List<Recipe>{newRecipe}}).ToList();
+            var steps = addRecipe.Steps.Select(
+                s => new Step { Instruction = s.Instruction, Recipe = newRecipe}).ToList();
+            
             newRecipe.Ingredients = ingredients;
+            newRecipe.Steps = steps;
             _context.Recipes.Add(newRecipe);
             serviceResponse.Data = _mapper.Map<GetRecipeDto>(newRecipe);
             await _context.SaveChangesAsync();
