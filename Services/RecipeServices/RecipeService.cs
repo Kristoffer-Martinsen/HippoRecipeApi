@@ -64,7 +64,8 @@ public class RecipeService : IRecipeService
             var newRecipe = new Recipe
             {
                 Name = addRecipe.Name,
-                Description = addRecipe.Description
+                Description = addRecipe.Description,
+                ImageURL = addRecipe.ImageURL
             };
 
             var ingredients = addRecipe.Ingredients.Select(i
