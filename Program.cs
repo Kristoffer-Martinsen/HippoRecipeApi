@@ -1,22 +1,11 @@
 using HippoRecipeApi.Models;
 using HippoRecipeApi.Services;
 using HippoRecipeApi.Services.RecipeServices;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
-using Microsoft.Identity.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container..
-builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAdB2C"));
-builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
-builder.Services.AddAuthorization(options =>
-{
-    options.FallbackPolicy = options.DefaultPolicy;
-});
-
+// Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson(
     options =>
     {
@@ -43,7 +32,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
