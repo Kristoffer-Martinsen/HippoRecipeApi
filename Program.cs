@@ -4,6 +4,7 @@ using HippoRecipeApi.Services.RecipeServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 builder.Services.AddControllers().AddNewtonsoftJson(
@@ -12,8 +13,16 @@ builder.Services.AddControllers().AddNewtonsoftJson(
         options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     }
     );
-builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration["ConnectionStrings:hippoRecipe:SqlDb"]));
-//builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddCors(options => 
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                        policy => 
+                        {
+                            policy.WithOrigins("http://localhost:5037", 
+                            "http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+                        });
+});
+builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -22,6 +31,8 @@ builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
