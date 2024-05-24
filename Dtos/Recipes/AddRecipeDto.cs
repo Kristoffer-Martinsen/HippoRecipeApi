@@ -10,4 +10,5 @@ public class AddRecipeDto
     public List<AddIngredientDto> Ingredients { get; set; }
     public string ImageURL { get; set; }
     public List<AddStepDto> Steps { get; set; }
+    public int Amount { get; set; }
 }
