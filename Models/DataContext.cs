@@ -12,7 +12,6 @@ public class DataContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Recipe>()
-            .HasMany(e => e.Ingredients)
-            .WithMany(e => e.Recipes);
+            .HasMany(e => e.Ingredients);
     }
 }

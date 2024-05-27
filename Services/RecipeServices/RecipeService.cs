@@ -40,7 +40,8 @@ public class RecipeService : IRecipeService
                 {
                     Id = i.Id,
                     Name = i.Name,
-                    Unit = i.Unit
+                    Unit = i.Unit,
+                    Amount = i.Amount
                 }).ToList(),
                 Steps = r.Steps.Select(s => new GetStepDto
                 {
@@ -77,7 +78,10 @@ public class RecipeService : IRecipeService
             };
 
             var ingredients = addRecipe.Ingredients.Select(i
-                => new Ingredient { Name = i.Name, Unit = i.Unit, Recipes = new List<Recipe>{newRecipe}}).ToList();
+                => new Ingredient
+                {
+                    Name = i.Name, Unit = i.Unit, Recipe = newRecipe, Amount = i.Amount
+                }).ToList();
             var steps = addRecipe.Steps.Select(
                 s => new Step { Instruction = s.Instruction, Recipe = newRecipe}).ToList();
             
