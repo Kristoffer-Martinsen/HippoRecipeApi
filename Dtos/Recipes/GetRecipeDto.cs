@@ -9,6 +9,5 @@ public class GetRecipeDto
     public string Name { get; set; }
     public string Description { get; set; }
     public List<GetIngredientDto> Ingredients { get; set; }
-    public string ImageURL { get; set; }
     public List<GetStepDto> Steps { get; set; }
 }   
