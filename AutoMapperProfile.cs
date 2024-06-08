@@ -2,6 +2,7 @@ using AutoMapper;
 using HippoRecipeApi.Dtos;
 using HippoRecipeApi.Dtos.Recipes;
 using HippoRecipeApi.Dtos.Steps;
+using HippoRecipeApi.Dtos.Tags;
 using HippoRecipeApi.Models;
 
 namespace HippoRecipeApi;
@@ -24,5 +25,8 @@ public class AutoMapperProfile : Profile
         CreateMap<AddStepDto, Step>();
         CreateMap<UpdateStepDto, Step>();
         CreateMap<Step, UpdateStepDto>();
+
+        CreateMap<Tag, TagDto>();
+        
     }
 }

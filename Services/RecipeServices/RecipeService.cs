@@ -2,6 +2,7 @@ using AutoMapper;
 using HippoRecipeApi.Dtos;
 using HippoRecipeApi.Dtos.Recipes;
 using HippoRecipeApi.Dtos.Steps;
+using HippoRecipeApi.Dtos.Tags;
 using HippoRecipeApi.Models;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
@@ -26,6 +27,7 @@ public class RecipeService : IRecipeService
         var recipes = await _context.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.Steps)
+            .Include(r => r.Tags)
             .ToListAsync();
         
         serviceResponse.Data = recipes
@@ -47,6 +49,12 @@ public class RecipeService : IRecipeService
                     Id = s.Id,
                     Instruction = s.Instruction
                 }).ToList(),
+                Tags = r.Tags.Any() ? 
+                    r.Tags.Select(t => new TagDto
+                        {
+                            TagName = t.TagName
+                        }).ToList()
+                    : null
             }).ToList();
         return serviceResponse;
     }
@@ -58,6 +66,7 @@ public class RecipeService : IRecipeService
         var recipe = await _context.Recipes
             .Include(r => r.Ingredients)
             .Include(r => r.Steps)
+            .Include(r => r.Tags)
             .FirstOrDefaultAsync(r => r.Id == id);
         serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
         return serviceResponse;
@@ -81,9 +90,12 @@ public class RecipeService : IRecipeService
                 }).ToList();
             var steps = addRecipe.Steps.Select(
                 s => new Step { Instruction = s.Instruction, Recipe = newRecipe}).ToList();
+            var tags = addRecipe.Tags.Select(
+                t => new Tag { TagName = t.TagName }).ToList();
             
             newRecipe.Ingredients = ingredients;
             newRecipe.Steps = steps;
+            newRecipe.Tags = tags;
             _context.Recipes.Add(newRecipe);
             serviceResponse.Data = _mapper.Map<GetRecipeDto>(newRecipe);
             await _context.SaveChangesAsync();
@@ -99,11 +111,14 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> PutRecipe(int id, UpdateRecipeDto updateRecipe)
     {
+        // TODO Need to be tested. sleepy time...
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {
             var recipe = await _context.Recipes
                 .Include(r => r.Ingredients)
+                .Include(r => r.Steps)
+                .Include(r => r.Tags)
                 .FirstOrDefaultAsync(r => r.Id == id);
             if (recipe == null)
             {

@@ -8,6 +8,7 @@ public class DataContext : DbContext
     public DbSet<Ingredient> Ingredients => Set<Ingredient>();
     public DbSet<Recipe> Recipes => Set<Recipe>();
     public DbSet<Step> Steps => Set<Step>();
+    public DbSet<Tag> Tags => Set<Tag>();
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
