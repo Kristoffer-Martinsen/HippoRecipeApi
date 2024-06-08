@@ -65,7 +65,6 @@ public class RecipeService : IRecipeService
 
     public async Task<ServiceResponse<GetRecipeDto>> AddRecipe(AddRecipeDto addRecipe)
     {
-        //TODO check if ingredient exists and use that ingredientID if it does. Probably needs a new column in Ingredient for alias or something
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {

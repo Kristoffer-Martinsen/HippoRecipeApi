@@ -9,4 +9,5 @@ public class Recipe
     public string Description { get; set; }
     public List<Ingredient> Ingredients { get; set; } = new();
     public List<Step> Steps { get; set; }
+    public List<Tag> Tags { get; } = [];
 }
