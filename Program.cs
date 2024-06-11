@@ -1,6 +1,7 @@
 using HippoRecipeApi.Models;
 using HippoRecipeApi.Services;
 using HippoRecipeApi.Services.RecipeServices;
+using HippoRecipeApi.Services.TagServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
 builder.Services.AddScoped<IIngredientService, IngredientService>();
+builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 var app = builder.Build();

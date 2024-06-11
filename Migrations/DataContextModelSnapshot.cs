@@ -47,7 +47,7 @@ namespace HippoRecipeApi.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Ingredients");
+                    b.ToTable("Ingredients", (string)null);
                 });
 
             modelBuilder.Entity("HippoRecipeApi.Models.Recipe", b =>
@@ -68,7 +68,7 @@ namespace HippoRecipeApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Recipes");
+                    b.ToTable("Recipes", (string)null);
                 });
 
             modelBuilder.Entity("HippoRecipeApi.Models.Step", b =>
@@ -90,7 +90,7 @@ namespace HippoRecipeApi.Migrations
 
                     b.HasIndex("RecipeId");
 
-                    b.ToTable("Steps");
+                    b.ToTable("Steps", (string)null);
                 });
 
             modelBuilder.Entity("HippoRecipeApi.Models.Tag", b =>
@@ -107,7 +107,7 @@ namespace HippoRecipeApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Tags", (string)null);
                 });
 
             modelBuilder.Entity("RecipeTag", b =>
@@ -122,7 +122,7 @@ namespace HippoRecipeApi.Migrations
 
                     b.HasIndex("TagsId");
 
-                    b.ToTable("RecipeTag");
+                    b.ToTable("RecipeTag", (string)null);
                 });
 
             modelBuilder.Entity("HippoRecipeApi.Models.Ingredient", b =>

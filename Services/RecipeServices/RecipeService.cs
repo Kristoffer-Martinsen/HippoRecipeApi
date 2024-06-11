@@ -52,6 +52,7 @@ public class RecipeService : IRecipeService
                 Tags = r.Tags.Any() ? 
                     r.Tags.Select(t => new TagDto
                         {
+                            Id = t.Id,
                             TagName = t.TagName
                         }).ToList()
                     : null
@@ -91,7 +92,7 @@ public class RecipeService : IRecipeService
             var steps = addRecipe.Steps.Select(
                 s => new Step { Instruction = s.Instruction, Recipe = newRecipe}).ToList();
             var tags = addRecipe.Tags.Select(
-                t => new Tag { TagName = t.TagName }).ToList();
+                t => new Tag { Id = t.Id, TagName = t.TagName }).ToList();
             
             newRecipe.Ingredients = ingredients;
             newRecipe.Steps = steps;
