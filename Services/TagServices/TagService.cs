@@ -18,9 +18,10 @@ public class TagService : ITagService
 
     public async Task<ServiceResponse<List<TagDto>>> GetAllTags()
     {
-        var serviceResponse = new ServiceResponse<List<TagDto>>();
-        var tags = await _context.Tags.ToListAsync();
-        serviceResponse.Data = tags.Select(t => _mapper.Map<TagDto>(t)).ToList();
-        return serviceResponse;
+        // var serviceResponse = new ServiceResponse<List<TagDto>>();
+        // var tags = await _context.Tags.ToListAsync();
+        // serviceResponse.Data = tags.Select(t => _mapper.Map<TagDto>(t)).ToList();
+        // return serviceResponse;
+        return null;
     }
 }

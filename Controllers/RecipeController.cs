@@ -19,19 +19,19 @@ public class RecipeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<GetRecipeDto>>>> GetAllRecipes()
+    public async Task<ActionResult<ServiceResponse<GetRecipeDto[]>>> GetAllRecipes()
     {
         return Ok(await _recipeService.GetAllRecipes());
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<ServiceResponse<GetIngredientDto>>> GetRecipeById(int id)
+    public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> GetRecipeById(int id)
     {
         return Ok(await _recipeService.GetRecipeById(id));
     }
 
     [HttpPost()]
-    public async Task<ActionResult<ServiceResponse<GetIngredientDto>>> AddRecipe(AddRecipeDto addRecipe)
+    public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> AddRecipe(AddRecipeDto addRecipe)
     {
         return Ok(await _recipeService.AddRecipe(addRecipe));
     }
@@ -42,15 +42,15 @@ public class RecipeController : ControllerBase
         return Ok(await _recipeService.PutRecipe(id, updateRecipe));
     }
 
-    [HttpPatch("{id}")]
-    public async Task<ActionResult<ServiceResponse<GetIngredientDto>>> PatchRecipe(int id,
-        [FromBody] JsonPatchDocument<UpdateRecipeDto> patchDocument)
-    {
-        return Ok(await _recipeService.PatchRecipe(id, patchDocument));
-    }
+    // [HttpPatch("{id}")]
+    // public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> PatchRecipe(int id,
+    //     [FromBody] JsonPatchDocument<UpdateRecipeDto> patchDocument)
+    // {
+    //     return Ok(await _recipeService.PatchRecipe(id, patchDocument));
+    // }
 
     [HttpDelete("{id}")]
-    public async Task<ActionResult<ServiceResponse<GetIngredientDto>>> DeleteRecipe(int id)
+    public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> DeleteRecipe(int id)
     {
         return Ok(await _recipeService.DeleteRecipe(id));
     }

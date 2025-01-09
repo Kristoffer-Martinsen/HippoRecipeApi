@@ -28,7 +28,6 @@ builder.Services.AddDbContext<DataContext>(opt => opt.UseSqlServer(builder.Confi
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IRecipeService, RecipeService>();
-builder.Services.AddScoped<IIngredientService, IngredientService>();
 builder.Services.AddScoped<ITagService, TagService>();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
