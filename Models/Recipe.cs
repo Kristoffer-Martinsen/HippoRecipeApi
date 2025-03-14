@@ -19,5 +19,5 @@ public class Recipe
     public required string Instructions { get; set; }
     
     // ReSharper disable once CollectionNeverUpdated.Global
-    // public List<Tag>? Tags { get; set; } = [];
+    public List<Tag>? Tags { get; set; } = [];
 }

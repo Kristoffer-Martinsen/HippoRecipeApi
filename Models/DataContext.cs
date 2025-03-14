@@ -6,7 +6,7 @@ public class DataContext : DbContext
 {
     public DataContext(DbContextOptions<DataContext> options) : base(options) { }
     public DbSet<Recipe> Recipes => Set<Recipe>();
-    // public DbSet<Tag> Tags => Set<Tag>();
+    public DbSet<Tag> Tags => Set<Tag>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
