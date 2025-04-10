@@ -1,6 +1,8 @@
 using System.Text.Json;
 using AutoMapper;
 using HippoRecipeApi.Dtos.Recipes;
+using HippoRecipeApi.Dtos.Tags;
+using HippoRecipeApi.Mappers;
 using HippoRecipeApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,13 +10,11 @@ namespace HippoRecipeApi.Services.RecipeServices;
 
 public class RecipeService : IRecipeService
 {
-    private readonly IMapper _mapper;
     private readonly DataContext _context;
     private readonly ILogger<RecipeService> _logger;
     
-    public RecipeService(IMapper mapper, DataContext context, ILogger<RecipeService> logger)
+    public RecipeService(DataContext context, ILogger<RecipeService> logger)
     {
-        _mapper = mapper;
         _context = context;
         _logger = logger;
     }
@@ -23,10 +23,10 @@ public class RecipeService : IRecipeService
     {
         var serviceResponse = new ServiceResponse<GetRecipeDto[]>();
 
-        var recipes = await _context.Recipes.ToListAsync();
-        serviceResponse.Data = _mapper.Map<GetRecipeDto[]>(recipes);
-        _logger.LogInformation("ServiceResponse: {ServiceResponse}", 
-            JsonSerializer.Serialize(serviceResponse));
+        var recipes = await _context.Recipes
+            .Include(r => r.Tags)
+            .ToListAsync();
+        serviceResponse.Data = recipes.Select(RecipeMapper.MapToGetDto).ToArray();
 
         return serviceResponse;
     }
@@ -34,13 +34,21 @@ public class RecipeService : IRecipeService
     public async Task<ServiceResponse<GetRecipeDto>> GetRecipeById(int id)
     {
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
-        var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == id);
-        serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
-        _logger.LogInformation("ServiceResponse: {ServiceResponse}", 
-            JsonSerializer.Serialize(recipe));      
+        var recipe = await _context.Recipes
+            .Include(r => r.Tags)
+            .FirstOrDefaultAsync(r => r.Id == id);
+        if (recipe != null)
+        {
+            serviceResponse.Data = RecipeMapper.MapToGetDto(recipe);
+        }
+        else
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = "Recipe not found";
+        }
         return serviceResponse;
     }
-
+    
     public async Task<ServiceResponse<GetRecipeDto>> AddRecipe(AddRecipeDto addRecipe)
     {
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
@@ -52,90 +60,98 @@ public class RecipeService : IRecipeService
                 Description = addRecipe.Description,
                 Ingredients = addRecipe.Ingredients,
                 Instructions = addRecipe.Instructions,
+                Tags = new List<Tag>()
             };
+
+            if (addRecipe.Tags != null)
+            {
+                foreach (var tagDto in addRecipe.Tags)
+                {
+                    var tag = await _context.Tags.FirstOrDefaultAsync(t => t.TagName == tagDto.TagName);
+                    if (tag == null)
+                    {
+                        tag = new Tag { TagName = tagDto.TagName };
+                        _context.Tags.Add(tag);
+                    }
+                    newRecipe.Tags.Add(tag);
+                }
+            }
             _context.Recipes.Add(newRecipe);
-            serviceResponse.Data = _mapper.Map<GetRecipeDto>(newRecipe);
             await _context.SaveChangesAsync();
+            serviceResponse.Data = RecipeMapper.MapToGetDto(newRecipe);
         }
         catch (Exception ex)
         {
             serviceResponse.Success = false;
             serviceResponse.Message = $"Error: {ex.Message}";
         }
-
+    
         return serviceResponse;
     }
-
+    
     public async Task<ServiceResponse<GetRecipeDto>> PutRecipe(int id, UpdateRecipeDto updateRecipe)
     {
-        // TODO Need to be tested. sleepy time...
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {
-            var recipe = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == id);
+            var recipe = await _context.Recipes
+                .Include(r => r.Tags)
+                .FirstOrDefaultAsync(r => r.Id == id);
+            
             if (recipe == null)
             {
                 serviceResponse.Success = false;
                 serviceResponse.Message = $"No recipe with {id} found";
                 return serviceResponse;
             }
+    
+            recipe.Name = updateRecipe.Name;
+            recipe.Description = updateRecipe.Description;
+            recipe.Ingredients = updateRecipe.Ingredients;
+            recipe.Instructions = updateRecipe.Instructions;
 
-            _mapper.Map(updateRecipe, recipe);
+            if (updateRecipe.Tags != null)
+            {
+                recipe.Tags.Clear();
+
+                foreach (var tagDto in updateRecipe.Tags)
+                {
+                    var tag = await _context.Tags.FirstOrDefaultAsync(t => t.TagName == tagDto.TagName);
+                    if (tag == null)
+                    {
+                        tag = new Tag { TagName = tagDto.TagName };
+                        _context.Tags.Add(tag);
+                    }
+                    recipe.Tags.Add(tag);
+                }
+            }
             await _context.SaveChangesAsync();
-            serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
+            serviceResponse.Data = RecipeMapper.MapToGetDto(recipe);
         }
         catch (Exception ex)
         {
             serviceResponse.Success = false;
             serviceResponse.Message = $"Error: {ex.Message}";
         }
-
+    
         return serviceResponse;
     }
-
-    // public async Task<ServiceResponse<GetRecipeDto>> PatchRecipe(int id, JsonPatchDocument<UpdateRecipeDto> patchDocument)
-    // {
-    //     var serviceResponse = new ServiceResponse<GetRecipeDto>();
-    //     try
-    //     {
-    //         var recipe = await _context.Recipes
-    //             .Include(r => r.Ingredients)
-    //             .FirstOrDefaultAsync(r => r.Id == id);
-    //         if (recipe == null)
-    //         {
-    //             serviceResponse.Success = false;
-    //             serviceResponse.Message = $"Recipe with {id} does not exist";
-    //             return serviceResponse;
-    //         }
-    //         //TODO Patching item in ingredients applies null value to properties missing from request
-    //         dynamic recipeToPatch = _mapper.Map<UpdateRecipeDto>(recipe);
-    //         patchDocument.ApplyTo(recipeToPatch);
-    //         _mapper.Map(recipeToPatch, recipe);
-    //         serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipe);
-    //         await _context.SaveChangesAsync();
-    //     }
-    //     catch (Exception ex)
-    //     {
-    //         serviceResponse.Success = false;
-    //         serviceResponse.Message = $"Error: {ex.Message}";
-    //     }
-    //
-    //     return serviceResponse;
-    // }
-
+    
     public async Task<ServiceResponse<GetRecipeDto>> DeleteRecipe(int id)
     {
         var serviceResponse = new ServiceResponse<GetRecipeDto>();
         try
         {
-            var recipeToDelete = await _context.Recipes.FirstOrDefaultAsync(r => r.Id == id);
+            var recipeToDelete = await _context.Recipes
+                .Include(r => r.Tags)
+                .FirstOrDefaultAsync(r => r.Id == id);
             
             if (recipeToDelete != null)
             {
                 _context.Recipes.Remove(recipeToDelete);
-                serviceResponse.Data = _mapper.Map<GetRecipeDto>(recipeToDelete);
+                serviceResponse.Data = RecipeMapper.MapToGetDto(recipeToDelete);
             }
-
+    
             await _context.SaveChangesAsync();
         }
         catch (Exception ex)
@@ -143,7 +159,7 @@ public class RecipeService : IRecipeService
             serviceResponse.Success = false;
             serviceResponse.Message = $"Error: {ex.Message}";
         }
-
+    
         return serviceResponse;
     }
 }

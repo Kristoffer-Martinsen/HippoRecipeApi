@@ -23,32 +23,32 @@ public class RecipeController : ControllerBase
     {
         return Ok(await _recipeService.GetAllRecipes());
     }
-
+    
     [HttpGet("{id}")]
     public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> GetRecipeById(int id)
     {
         return Ok(await _recipeService.GetRecipeById(id));
     }
-
+    
     [HttpPost()]
     public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> AddRecipe(AddRecipeDto addRecipe)
     {
         return Ok(await _recipeService.AddRecipe(addRecipe));
     }
-
+    
     [HttpPut("{id}")]
     public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> PutRecipe(int id, UpdateRecipeDto updateRecipe)
     {
         return Ok(await _recipeService.PutRecipe(id, updateRecipe));
     }
-
-    // [HttpPatch("{id}")]
-    // public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> PatchRecipe(int id,
-    //     [FromBody] JsonPatchDocument<UpdateRecipeDto> patchDocument)
-    // {
-    //     return Ok(await _recipeService.PatchRecipe(id, patchDocument));
-    // }
-
+    
+    // // [HttpPatch("{id}")]
+    // // public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> PatchRecipe(int id,
+    // //     [FromBody] JsonPatchDocument<UpdateRecipeDto> patchDocument)
+    // // {
+    // //     return Ok(await _recipeService.PatchRecipe(id, patchDocument));
+    // // }
+    
     [HttpDelete("{id}")]
     public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> DeleteRecipe(int id)
     {

@@ -1,9 +1,10 @@
-using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations;
 
 namespace HippoRecipeApi.Models;
 
 public class Recipe
 {
+    [Key]
     public int Id { get; set; }
     
     // ReSharper disable once EntityFramework.ModelValidation.UnlimitedStringLength

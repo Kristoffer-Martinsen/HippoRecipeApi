@@ -5,5 +5,6 @@ namespace HippoRecipeApi.Services.TagServices;
 
 public interface ITagService
 {
-    Task<ServiceResponse<List<TagDto>>> GetAllTags();
+    Task<ServiceResponse<GetTagDto[]>> GetAllTags();
+    Task<ServiceResponse<GetTagDto>> DeleteTag(int id);
 }

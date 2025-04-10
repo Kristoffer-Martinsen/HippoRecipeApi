@@ -8,5 +8,5 @@ public class UpdateRecipeDto
     public string Description { get; set; }
     public string Ingredients { get; set; }
     public string Instructions { get; set; }
-    // public List<TagDto>? Tags { get; set; }
+    public List<GetTagDto>? Tags { get; set; }
 }

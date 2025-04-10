@@ -17,9 +17,14 @@ public class TagController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<ServiceResponse<List<TagDto>>>> GetAllTags()
+    public async Task<ActionResult<ServiceResponse<List<GetTagDto>>>> GetAllTags()
     {
         return Ok(await _tagService.GetAllTags());
     }
 
+    [HttpDelete("{id}")]
+    public async Task<ActionResult<ServiceResponse<GetTagDto>>> DeleteTag(int id)
+    {
+        return Ok(await _tagService.DeleteTag(id));
+    }
 }
