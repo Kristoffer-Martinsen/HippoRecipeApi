@@ -42,13 +42,6 @@ public class RecipeController : ControllerBase
         return Ok(await _recipeService.PutRecipe(id, updateRecipe));
     }
     
-    // // [HttpPatch("{id}")]
-    // // public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> PatchRecipe(int id,
-    // //     [FromBody] JsonPatchDocument<UpdateRecipeDto> patchDocument)
-    // // {
-    // //     return Ok(await _recipeService.PatchRecipe(id, patchDocument));
-    // // }
-    
     [HttpDelete("{id}")]
     public async Task<ActionResult<ServiceResponse<GetRecipeDto>>> DeleteRecipe(int id)
     {

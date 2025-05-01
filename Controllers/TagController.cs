@@ -27,4 +27,10 @@ public class TagController : ControllerBase
     {
         return Ok(await _tagService.DeleteTag(id));
     }
+
+    [HttpPost]
+    public async Task<ActionResult<ServiceResponse<GetTagDto>>> AddTag(AddTagDto tag)
+    {
+        return Ok(await _tagService.AddTag(tag));
+    }
 }

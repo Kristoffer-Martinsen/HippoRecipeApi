@@ -1,4 +1,4 @@
-using AutoMapper;
+
 using HippoRecipeApi.Dtos.Tags;
 using HippoRecipeApi.Mappers;
 using HippoRecipeApi.Models;
@@ -38,6 +38,30 @@ public class TagService : ITagService
             serviceResponse.Success = false;
             serviceResponse.Message = "Tag not found";
         }
+        return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<GetTagDto>> AddTag(AddTagDto newTag)
+    {
+        var serviceResponse = new ServiceResponse<GetTagDto>();
+        try
+        {
+            var tagToAdd = new Tag
+            {
+                TagName = newTag.TagName,
+            };
+            
+            _context.Tags.Add(tagToAdd);
+            await _context.SaveChangesAsync();
+            serviceResponse.Data = TagMapper.GetTagDto(tagToAdd);
+            
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Success = false;
+            serviceResponse.Message = ex.Message;
+        }
+
         return serviceResponse;
     }
 }
