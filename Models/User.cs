@@ -1,10 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace HippoRecipeApi.Models;
 
 public class User
 {
+    [Key]
     public int Id { get; set; }
     public string UserName { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
-    public List<Recipe>? Recipes { get; set; }
+    public Recipe[] Recipes { get; set; } = [];
 }

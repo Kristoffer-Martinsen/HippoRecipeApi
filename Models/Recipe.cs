@@ -21,4 +21,6 @@ public class Recipe
     
     // ReSharper disable once CollectionNeverUpdated.Global
     public List<Tag>? Tags { get; set; } = [];
+    
+    public User? User { get; set; }
 }
