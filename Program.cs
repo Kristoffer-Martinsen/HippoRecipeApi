@@ -1,8 +1,11 @@
+using System.Text;
 using HippoRecipeApi.Models;
 using HippoRecipeApi.Services;
 using HippoRecipeApi.Services.RecipeServices;
 using HippoRecipeApi.Services.TagServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
@@ -19,9 +22,28 @@ builder.Services.AddCors(options =>
     options.AddPolicy(name: MyAllowSpecificOrigins,
                         policy => 
                         {
-                            policy.WithOrigins("http://localhost:5037", 
-                            "http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
+                            policy.WithOrigins("https://localhost:7139",
+                                "https://localhost:3000",
+                                "http://localhost:3000").AllowAnyHeader().AllowAnyMethod();
                         });
+});
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
 });
 //builder.Services.AddDbContext<DataContext>(opt =>
 //  opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
